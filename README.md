@@ -3,7 +3,7 @@
 #### New in Version 2
 
 * Redone in JXA
-    * Previous version used bash with JXA via `osascript` for popup dialog
+    * [Previous version](https://github.com/blitterated/folder2iso/blob/83d3925789513c3b612bb94f4e10ab76c989a9a5/Quick%20Action%20for%20creating%20an%20ISO%20from%20a%20folder.md) used bash with JXA via `osascript` for popup dialog
 * You can choose the output folder for the ISO
     * Default is the parent folder of the target folder of ISO conversion
     * ISO filename still defaults to target folder's name
