@@ -299,9 +299,40 @@ function getObjectInfo(obj) {
 * [OS X 10.11 Release Notes](https://developer.apple.com/library/archive/releasenotes/InterapplicationCommunication/RN-JavaScriptForAutomation/Articles/OSX10-11.html#//apple_ref/doc/uid/TP40014508-CH110-SW1)
 * [JXA-Cookbook](https://github.com/JXA-Cookbook/JXA-Cookbook)
 
-#### Icons
+#### Run Shell Command from JXA
+
+* [applescript - How to call a shell command from JavaScript JXA? - Stack Overflow](https://stackoverflow.com/questions/48201173/how-to-call-a-shell-command-from-javascript-jxa#48202177)
+* [JXA: Execute shell script and get results? - Questions & Suggestions - Keyboard Maestro Discourse](https://forum.keyboardmaestro.com/t/jxa-execute-shell-script-and-get-results/5955)
+* [macOS JavaScript for Automation (JXA) Notes // galvanist](https://www.galvanist.com/posts/2020-03-28-jxa_notes/)
+
+#### Using macOS Icons
 
 * [How to Extract App Icons and macOS Icons on a Mac](https://www.makeuseof.com/how-to-extract-app-icons-mac/)
 * [Where Mac System Icons & Default Icons Are Located in Mac OS X](https://osxdaily.com/2014/07/27/mac-os-x-system-icons-location/)
-* [use bundle icons in jxa dialog at DuckDuckGo](https://duckduckgo.com/?q=use+bundle+icons+in+jxa+dialog&t=brave&ia=web)
 * [javascript - JXA: display dialog with custom icon - Stack Overflow](https://stackoverflow.com/questions/43966613/jxa-display-dialog-with-custom-icon)
+
+#### Get Object Type Info
+
+* [Finding Variable Type in JavaScript - Stack Overflow](https://stackoverflow.com/questions/4456336/finding-variable-type-in-javascript#4456344)
+* [javascript - Get the name of an object's type - Stack Overflow](https://stackoverflow.com/questions/332422/get-the-name-of-an-objects-type)
+* [javascript - The most accurate way to check JS object's type? - Stack Overflow](https://stackoverflow.com/questions/7893776/the-most-accurate-way-to-check-js-objects-type)
+* [How to Loop and Enumerate JavaScript Object Properties](https://stackabuse.com/how-to-loop-and-enumerate-javascript-object-properties/)
+
+#### String Operations
+
+* [How can I do string interpolation in JavaScript? - Stack Overflow](https://stackoverflow.com/questions/1408289/how-can-i-do-string-interpolation-in-javascript)
+* [How to Concatenate Strings in an Array in JavaScript](https://stackabuse.com/how-to-concatenate-strings-in-an-array-in-javascript/)
+* [JavaScript Array map() Method](https://www.w3schools.com/jsref/jsref_map.asp)
+* [JavaScript String toString() Method](https://www.w3schools.com/jsref/jsref_tostring_string.asp)
+* [string - Need a basename function in Javascript - Stack Overflow](https://stackoverflow.com/questions/3820381/need-a-basename-function-in-javascript)
+* [Split a String at a specific Index using JavaScript | bobbyhadz](https://bobbyhadz.com/blog/javascript-split-string-by-index)
+
+#### General JavaScript
+
+* [Understanding Arrow Functions in JavaScript | DigitalOcean](https://www.digitalocean.com/community/tutorials/understanding-arrow-functions-in-javascript)
+* [Var, Let, and Const – What's the Difference?](https://www.freecodecamp.org/news/var-let-and-const-whats-the-difference/)
+* [JavaScript Classes](https://www.w3schools.com/Js/js_classes.asp)
+* [How to Use Named Parameters in JavaScript - Mastering JS](https://masteringjs.io/tutorials/fundamentals/parameters)
+* [JavaScript "use strict"](https://www.w3schools.com/js/js_strict.asp)
+* [How to assign multiple variables at once in JavaScript? - Stack Overflow](https://stackoverflow.com/questions/38411834/how-to-assign-multiple-variables-at-once-in-javascript/38411852#38411852)
+* [JavaScript show type at DuckDuckGo](https://duckduckgo.com/?q=JavaScript+show+type&t=brave&ia=web)
