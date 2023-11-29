@@ -1,30 +1,120 @@
 # Quick Action for creating an ISO from a folder
 
-## Shell script for Automator
+#### New in Version 2
 
-```sh
-folder2iso () {
-    fullPath="$(< /dev/stdin)"
+* Redone in JXA
+    * Previous version used bash with JXA via `osascript` for popup dialog
+* You can choose the output folder for the ISO
+    * Default is the parent folder of the target folder of ISO conversion
+    * ISO filename still defaults to target folder's name
 
-    folderName=$(basename "$fullPath")
-    folderPath=$(dirname "$fullPath")
+#### TODO
 
-    hdiutil makehybrid -iso -joliet -o "${folderPath}/${folderName}.iso" "${fullPath}"
+1. Handle pre-existing ISO file at destination
+1. MRU destination by source path
+1. Change default file name (source folder)
 
-    showDialog "${fullPath}"
+## JXA script for Automator
+
+```javascript
+"use strict"
+
+const app = getApp();
+
+function getApp(input, parameters) {
+    let app = Application.currentApplication();
+    app.includeStandardAdditions = true;
+    return app;
 }
 
-showDialog() {
-    folder="$1"
+function run(input, parameters) {
+    folder2iso(input[0].toString());
+}
 
-osascript -l JavaScript <<-EndOfScript
-    var app = Application.currentApplication();
-    app.includeStandardAdditions = true;
- 
-    var dialogText  = \`ISO image created from folder:\n"${folder}"\`;
-    var dialogTitle = "Enjoy Your ISO";
-    var buttonText  = "Done";
-    var iconPath    = Path('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/CDAudioVolumeIcon.icns');
+function folder2iso(srcFolder) {
+    let [srcParentFolder, srcFolderName] = 
+             splitPathAndName(srcFolder);
+
+    let destChoice = chooseISODestination(srcParentFolder);
+
+    if (destChoice.success) {
+        let destFolder = destChoice.value.toString();
+        let isoName = `${srcFolderName}.iso`;
+        createISO(srcFolder, destFolder, isoName);
+    } else {
+        showErrorDialog(destChoice.value);
+    }
+}
+
+function splitPathAndName(fullPath) {
+    let pivot = fullPath.lastIndexOf("/") + 1;
+    return [fullPath.slice(0, pivot), fullPath.slice(pivot)];
+}
+
+class Choice {
+    constructor({success, value}) {
+        this.success = success;
+        this.value = value;
+     }
+}
+
+function chooseISODestination(defaultFolder) {
+    try {
+
+        let destPath = app.chooseFolder({
+                withPrompt: "Please select an output folder for the ISO image",
+                defaultLocation: Path(defaultFolder)
+            });
+
+        return new Choice({success: true, value: destPath});
+
+    } catch (err) {
+        return new Choice({success: false, value: err});
+    }
+}
+
+function createISO(srcFolder, destFolder, isoName) {
+    let makeISOCmd = 
+        `hdiutil makehybrid -iso -joliet -o "${destFolder}/${isoName}" "${srcFolder}"`;
+    let result = app.doShellScript(makeISOCmd);
+	showISODoneDialog(srcFolder);
+    return result;
+}
+
+function showISODoneDialog(folder) {
+    let dialogText  = `ISO image created from folder:\n"${folder}"`;
+    let dialogTitle = "Enjoy Your ISO";
+    let iconPath    = Path('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/CDAudioVolumeIcon.icns');
+
+    showDialog(dialogText, dialogTitle, iconPath);
+}
+
+function showErrorDialog(err) {
+    let dialogText;
+    let dialogTitle;
+    let iconPath;
+
+    if (err.errorNumber == -128) {
+
+        // err.errorMessage is undefined at this point
+        dialogText  = `ISO creation cancelled.`;
+        dialogTitle = "Cancelled";
+        iconPath    = Path('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/ToolbarDeleteIcon.icns');
+
+    } else {
+
+        dialogText  = `Error Number:  ${err.errorNumber}\n\n` + 
+                      `Error Message: ${err.errorMessage}`;
+        dialogTitle = "Error";
+        iconPath    = Path('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns');
+
+    }
+
+    showDialog(dialogText, dialogTitle, iconPath);
+}
+
+function showDialog(dialogText, dialogTitle, iconPath) {
+    let buttonText  = "Done";
 
     app.displayDialog(
         dialogText,
@@ -36,10 +126,7 @@ osascript -l JavaScript <<-EndOfScript
             givingUpAfter: 10
         }
     );
-EndOfScript
 }
-
-folder2iso
 ```
 
 ## Add to Automator
@@ -48,12 +135,12 @@ folder2iso
 1. File -> New
 1. Choose Quick Action
 1. At top, "Workflow receives current folders in Finder.app"
-1. Search and select “Run Shell Script”
-1. Drag “Run Shell Script” action to right side of window
-1. Shell: /bin/bash
-1. Pass input: as arguments
+1. Select "Actions" in top left
+1. Select "Library"
+1. Select "Utilities"
+1. Drag "Run JavaScript" action to right side of window
 1. Add code above into action
-1. Save QuickAction as "Make ISO from folder"
+1. Save Quick Action as "Folder 2 ISO"
 
 ## Additional Info
 
@@ -127,7 +214,7 @@ g     getting source data.
 x     coercing script values.
 e     manipulating the event create and send functions.
 r     recording scripts.
-v     “convenience” APIs to execute scripts in one step.
+v     "convenience" APIs to execute scripts in one step.
 d     manipulating dialects.
 h     using scripts to handle Apple Events.
 ```
@@ -152,6 +239,44 @@ osascript -l JavaScript <<-EndOfScript
         }
     );
 EndOfScript
+```
+
+### JXA Quick Action input parameters exploration
+
+Drop this in a Quick Action "Run JavaScript" step to see what gets passed in.
+
+```sh
+function run(input, parameters) {
+
+    var app = Application.currentApplication();
+    app.includeStandardAdditions = true;
+
+    var inputPath = input[0];
+ 
+    var dialogText  = `inputPath\n${getObjectInfo(inputPath)}\n\n` +
+                      `parameters:\n${getObjectInfo(parameters)}`;
+    var dialogTitle = "Quick Action Run Javascript Test";
+    var buttonText  = "Done";
+
+    app.displayDialog(
+        dialogText,
+        {
+            withTitle: dialogTitle,
+            buttons: [buttonText],
+            defaultButton: buttonText
+        }
+    );
+
+    return input;
+}
+
+function getObjectInfo(obj) {
+    return `value: ${obj}\n` +
+           `type: ${Object.prototype.toString.call(obj)}\n` +
+           `name: ${obj.constructor.name}\n\n` +
+           `length: ${Object.keys(obj).length}\n` +
+           `keys:\n${Object.keys(obj).join("\n")}`;
+}
 ```
 
 ## Resources
