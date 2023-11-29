@@ -292,6 +292,7 @@ function getObjectInfo(obj) {
 
 #### JXA
 
+* [macOS JavaScript for Automation (JXA) Notes // galvanist](https://www.galvanist.com/posts/2020-03-28-jxa_notes/)
 * [Mac Automation Scripting Guide: Displaying Dialogs and Alerts](https://developer.apple.com/library/archive/documentation/LanguagesUtilities/Conceptual/MacAutomationScriptingGuide/DisplayDialogsandAlerts.html)
 * [Commands Reference](https://developer.apple.com/library/archive/documentation/AppleScript/Conceptual/AppleScriptLangGuide/reference/ASLR_cmds.html#//apple_ref/doc/uid/TP40000983-CH216-SW12)
 * [JXA Resources](https://apple-dev.groups.io/g/jxa/wiki/3202)
