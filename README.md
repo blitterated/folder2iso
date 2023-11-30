@@ -14,121 +14,6 @@
 1. MRU destination by source path
 1. Change default file name (source folder)
 
-## JXA script for Automator
-
-```javascript
-"use strict"
-
-const app = getApp();
-
-function getApp(input, parameters) {
-    let app = Application.currentApplication();
-    app.includeStandardAdditions = true;
-    return app;
-}
-
-function run(input, parameters) {
-    folder2iso(input[0].toString());
-}
-
-function folder2iso(srcFolder) {
-    let [srcParentFolder, srcFolderName] = 
-             splitPathAndName(srcFolder);
-
-    let destChoice = chooseISODestination(srcParentFolder);
-
-    if (destChoice.success) {
-        let destFolder = destChoice.value.toString();
-        let isoName = `${srcFolderName}.iso`;
-        createISO(srcFolder, destFolder, isoName);
-    } else {
-        showErrorDialog(destChoice.value);
-    }
-}
-
-function splitPathAndName(fullPath) {
-    let pivot = fullPath.lastIndexOf("/") + 1;
-    return [fullPath.slice(0, pivot), fullPath.slice(pivot)];
-}
-
-class Choice {
-    constructor({success, value}) {
-        this.success = success;
-        this.value = value;
-     }
-}
-
-function chooseISODestination(defaultFolder) {
-    try {
-
-        let destPath = app.chooseFolder({
-                withPrompt: "Please select an output folder for the ISO image",
-                defaultLocation: Path(defaultFolder)
-            });
-
-        return new Choice({success: true, value: destPath});
-
-    } catch (err) {
-        return new Choice({success: false, value: err});
-    }
-}
-
-function createISO(srcFolder, destFolder, isoName) {
-    let makeISOCmd = 
-        `hdiutil makehybrid -iso -joliet -o "${destFolder}/${isoName}" "${srcFolder}"`;
-    let result = app.doShellScript(makeISOCmd);
-	showISODoneDialog(srcFolder);
-    return result;
-}
-
-function showISODoneDialog(folder) {
-    let dialogText  = `ISO image created from folder:\n"${folder}"`;
-    let dialogTitle = "Enjoy Your ISO";
-    let iconPath    = Path('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/CDAudioVolumeIcon.icns');
-
-    showDialog(dialogText, dialogTitle, iconPath);
-}
-
-function showErrorDialog(err) {
-    let dialogText;
-    let dialogTitle;
-    let iconPath;
-
-    if (err.errorNumber == -128) {
-
-        // err.errorMessage is undefined at this point
-        dialogText  = `ISO creation cancelled.`;
-        dialogTitle = "Cancelled";
-        iconPath    = Path('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/ToolbarDeleteIcon.icns');
-
-    } else {
-
-        dialogText  = `Error Number:  ${err.errorNumber}\n\n` + 
-                      `Error Message: ${err.errorMessage}`;
-        dialogTitle = "Error";
-        iconPath    = Path('/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/AlertStopIcon.icns');
-
-    }
-
-    showDialog(dialogText, dialogTitle, iconPath);
-}
-
-function showDialog(dialogText, dialogTitle, iconPath) {
-    let buttonText  = "Done";
-
-    app.displayDialog(
-        dialogText,
-        {
-            withTitle: dialogTitle,
-            withIcon: iconPath,
-            buttons: [buttonText],
-            defaultButton: buttonText,
-            givingUpAfter: 10
-        }
-    );
-}
-```
-
 ## Add to Automator
 
 1. Open Automator
@@ -139,8 +24,14 @@ function showDialog(dialogText, dialogTitle, iconPath) {
 1. Select "Library"
 1. Select "Utilities"
 1. Drag "Run JavaScript" action to right side of window
-1. Add code above into action
+1. Add code from [`folder2iso.js`](https://github.com/blitterated/folder2iso/blob/master/folder2iso.js)
 1. Save Quick Action as "Folder 2 ISO"
+
+## Usage
+
+1. Right click on a folder
+1. Select Quick Actions => Folder 2 ISO
+1. Select destination folder for ISO file
 
 ## Additional Info
 
